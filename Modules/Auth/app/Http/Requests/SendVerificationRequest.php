@@ -10,6 +10,13 @@ use Modules\Auth\Enums\VerificationActionType;
 
 class SendVerificationRequest extends FormRequest
 {
+    public ContactType $contactType;
+
+    public function prepareForValidation()
+    {
+        $this->contactType = ContactType::detectContactType(($this->input('contact', ) ?? ''));
+    }
+
     /**
      * Get the validation rules that apply to the request.
      */
@@ -31,15 +38,13 @@ class SendVerificationRequest extends FormRequest
 
     private function getContactValidationRules(): array
     {
-        $contactType = ContactType::detectContactType(($this->input('contact', '')));
-
         $verificationAction = VerificationActionType::tryFrom($this->input('action'));
 
         if(!$verificationAction){
             return [];
         }
 
-        if($contactType === ContactType::EMAIL) {
+        if($this->contactType === ContactType::EMAIL) {
             return [
                 'email:rfc,dns',
                 Rule::when($verificationAction->isContactNeedToBeUnique(), [

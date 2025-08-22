@@ -1,4 +1,6 @@
 {
     "Auth": true,
-    "User": true
+    "User": true,
+    "Php": true,
+    "Artisan": true
 }
